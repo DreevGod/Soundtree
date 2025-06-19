@@ -1,26 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Авторизация</title>
-  <script>
-    // Ловим данные от Telegram
-    const tgData = Object.fromEntries(new URLSearchParams(window.location.hash.slice(1)));
+<script>
+  // Ловим данные от Telegram
+  const tgData = Object.fromEntries(new URLSearchParams(window.location.hash.slice(1)));
+  
+  if(tgData.id) {
+    // Сохраняем пользователя
+    localStorage.setItem('user', JSON.stringify({
+      id: tgData.id,
+      name: tgData.first_name,
+      photo: tgData.photo_url,
+      city: tgData.username || 'Не указан'
+    }));
     
-    if(tgData.id) {
-      // Сохраняем в localStorage
-      localStorage.setItem('user', JSON.stringify({
-        id: tgData.id,
-        name: tgData.first_name,
-        photo: tgData.photo_url,
-        city: tgData.username || 'Не указан'
-      }));
-      
-      // Перенаправляем в профиль
-      setTimeout(() => window.location = 'profile.html', 1000);
-    }
-  </script>
-</head>
-<body>
-  <h1>Авторизация...</h1>
-</body>
-</html>
+    // Редирект после входа
+    const redirectUrl = localStorage.getItem('redirect') || 'index.html';
+    localStorage.removeItem('redirect');
+    window.location.href = redirectUrl;
+  } else {
+    window.location.href = 'index.html';
+  }
+</script>
