@@ -1,336 +1,279 @@
 <!DOCTYPE html>
-<html>
-<head> 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌳</text></svg>">
-
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-    <title>Soundtree | Музыкальные корни СНГ</title>
-    <style>
-        body <div style="
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #1DB954;
-  color: white;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 1000;
-" onclick="shareSite()">↗️</div>
-
-<script>
-  function shareSite() {
-    if(navigator.share) {
-      // Для мобильных
-      navigator.share({
-        title: 'Soundtree',
-        text: 'Слушай музыку артистов СНГ!',
-        url: window.location.href
-      });
-    } else {
-      // Для компьютеров
-      const link = prompt('Скопируй ссылку:', window.location.href);
-      if(link) navigator.clipboard.writeText(link);
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soundtree | Музыкальные корни СНГ</title>
+  <style>
+    :root {
+      --primary: #1DB954;
+      --dark: #121212;
+      --gray: #181818;
+      --light: #ffffff;
+      --accent: #FF5E3A;
     }
-  }
-</script>
-
-<header style="
-  background: #121212;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-">
-  <div class="logo" style="
-    font-size: 24px;
-    font-weight: bold;
-    color: #1DB954;
-  ">SOUNDTREE</div>
-  
-  <nav style="display: flex; gap: 15px;">
-    <a href="index.html" style="color: #1DB954; text-decoration: none;">Главная</a>
-    <a href="cities.html" style="color: #aaa; text-decoration: none;">Города</a>
-    <a href="top.html" style="color: #aaa; text-decoration: none;">Топ недели</a>
-    <a href="artists.html" style="color: #aaa; text-decoration: none;">Артисты</a>
-  </nav>
-  
-  <div id="auth-btn" style="min-width: 180px; text-align: right;"></div>
-</header>
-
-<div style="height: 20px;"></div> <!-- Отступ после шапки -->
-<script>
-  // Проверяем авторизацию при загрузке
-  document.addEventListener('DOMContentLoaded', () => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const authBtn = document.getElementById('auth-btn');
     
-    if (user) {
-      authBtn.innerHTML = `<a href="profile.html" style="color:white;">👤 ${user.name}</a>`;
-    } else {
-      authBtn.innerHTML = `
-        <script async src="https://telegram.org/js/telegram-widget.js?22" 
-          data-telegram-login="soundtree_auth_bot" 
-          data-size="large"
-          data-radius="20"
-          data-auth-url="${window.location.origin}/auth.html" 
-          data-request-access="write"
-        ><\/script>
-      `;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
     }
-  });
-</script>
-
-{
-            background: #0f0f0f;
-            color: white;
-            font-family: Arial;
-            text-align: center;
-            padding: 20px;
-        }
-        .header {
-            padding: 30px 0;
-        }
-        .logo {
-            font-size: 42px;
-            font-weight: bold;
-            color: #1DB954;
-        }
-        .slogan {
-            margin: 10px 0 30px;
-            color: #aaa;
-        }
-        .city {
-            background: #181818;
-            border-radius: 10px;
-            margin: 20px auto;
-            padding: 20px;
-            max-width: 500px;
-            border-left: 4px solid #FF5E3A;
-        }
-        audio {
-            width: 100%;
-            margin: 15px 0;
-        }
-        .upload-btn {
-            background: #1DB954;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 18px;
-            border-radius: 30px;
-            margin: 30px 0;
-            cursor: pointer;
-        }
-        .footer {
-            margin-top: 50px;
-            color: #777;
-        }
-    </style>
+    
+    body {
+      background: var(--dark);
+      color: var(--light);
+      line-height: 1.6;
+    }
+    
+    /* Шапка */
+    header {
+      background: var(--dark);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.5);
+      border-bottom: 2px solid var(--primary);
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    
+    nav {
+      display: flex;
+      gap: 15px;
+    }
+    
+    nav a {
+      color: #aaa;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    
+    nav a:hover {
+      color: var(--light);
+    }
+    
+    nav a.active {
+      color: var(--primary);
+      font-weight: bold;
+    }
+    
+    #auth-btn {
+      min-width: 180px;
+      text-align: right;
+    }
+    
+    .auth-button {
+      background: var(--primary);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+    }
+    
+    /* Герой-блок */
+    .hero {
+      text-align: center;
+      padding: 50px 20px;
+      background: linear-gradient(rgba(0,0,0,0.7), url('https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center/cover;
+    }
+    
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 30px;
+      color: #ddd;
+    }
+    
+    /* Блоки с треками */
+    .city {
+      background: var(--gray);
+      border-radius: 10px;
+      margin: 30px auto;
+      padding: 20px;
+      max-width: 800px;
+      border-left: 4px solid var(--accent);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    .city h2 {
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    
+    .track {
+      padding: 15px;
+      background: #232323;
+      margin: 15px 0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .track img {
+      width: 60px;
+      height: 60px;
+      border-radius: 5px;
+      object-fit: cover;
+    }
+    
+    .track-info {
+      flex-grow: 1;
+    }
+    
+    .track-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .track-artist {
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+    
+    audio {
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    /* Футер */
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      background: var(--dark);
+      margin-top: 50px;
+      color: #777;
+    }
+  </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">SOUNDTREE</div>
-        <div class="slogan">Музыкальные корни СНГ</div>
+  <!-- Шапка -->
+  <header>
+    <div class="logo">SOUNDTREE</div>
+    
+    <nav>
+      <a href="index.html" class="active">Главная</a>
+      <a href="cities.html">Города</a>
+      <a href="top.html">Топ недели</a>
+      <a href="artists.html">Артисты</a>
+    </nav>
+    
+    <div id="auth-btn">
+      <a href="#" class="auth-button" id="login-button">
+        <span>Войти через Telegram</span>
+      </a>
     </div>
+  </header>
 
-    <div class="city">
-        <h2>Москва</h2>
-        <p>Артист: Макс из Черемушек</p>
+  <!-- Герой-блок -->
+  <section class="hero">
+    <h1>Музыкальные корни СНГ</h1>
+    <p>Платформа для независимых артистов из России, Казахстана, Беларуси и других стран Содружества</p>
+  </section>
+
+  <!-- Треки -->
+  <div class="city">
+    <h2>Москва</h2>
+    
+    <div class="track">
+      <img src="https://images.genius.com/8852c9c8b4d8e5c4c04fbcb6e7c0b2b8.640x640x1.jpg" alt="Обложка">
+      <div class="track-info">
+        <div class="track-title">Восточный Бит</div>
+        <div class="track-artist">Казань Волна</div>
         <audio controls>
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+          <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
         </audio>
+      </div>
     </div>
-
-    <div class="city">
-        <h2>Алматы</h2>
-        <p>Артист: Айгерим</p>
+    
+    <div class="track">
+      <img src="https://i1.sndcdn.com/artworks-000247840245-6b9t96-t500x500.jpg" alt="Обложка">
+      <div class="track-info">
+        <div class="track-title">Сибирские Просторы</div>
+        <div class="track-artist">Алёна из Томска</div>
         <audio controls>
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+          <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
         </audio>
+      </div>
     </div>
+  </div>
 
-    <div class="city">
-        <h2>Киев</h2>
-        <p>Артист: Тарас</p>
+  <!-- Другие города -->
+  <div class="city">
+    <h2>Алматы</h2>
+    
+    <div class="track">
+      <img src="https://sun9-31.userapi.com/impg/qV0kX0KqUv0WYq1l2K7dD9LgHx6q1k7Q7X7X7Q/5Yt9J7X9x5A.jpg?size=500x500&quality=96&sign=1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a" alt="Обложка">
+      <div class="track-info">
+        <div class="track-title">Степной Ветер</div>
+        <div class="track-artist">Darkhan</div>
         <audio controls>
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
+          <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
         </audio>
+      </div>
     </div>
+  </div>
 
-    <button class="upload-btn">+ Добавить трек</button>
+  <footer>
+    Soundtree © 2025 - Музыка без границ. Сделано с ❤️ для СНГ
+  </footer>
 
-    <div class="footer">
-        Soundtree © 2025 - Музыка без границ
-    </div>
+  <!-- Скрипты -->
+  <script>
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', () => {
+      // Проверка авторизации
+      const user = JSON.parse(localStorage.getItem('user'));
+      const authBtn = document.getElementById('auth-btn');
+      const loginButton = document.getElementById('login-button');
+      
+      if (user) {
+        authBtn.innerHTML = `
+          <a href="profile.html" class="auth-button">
+            <img src="${user.photo || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" 
+                 style="width:24px;height:24px;border-radius:50%;">
+            ${user.name}
+          </a>
+        `;
+      } else {
+        loginButton.onclick = function(e) {
+          e.preventDefault();
+          initTelegramAuth();
+        };
+      }
+      
+      // Функция инициализации Telegram
+      function initTelegramAuth() {
+        const script = document.createElement('script');
+        script.src = 'https://telegram.org/js/telegram-widget.js?22';
+        script.async = true;
+        script.dataset.telegramLogin = 'SoundtreeAuthBot';
+        script.dataset.size = 'large';
+        script.dataset.radius = '20';
+        script.dataset.authUrl = window.location.origin + '/auth.html';
+        script.dataset.requestAccess = 'write';
+        document.body.appendChild(script);
+      }
+    });
+  </script>
 </body>
 </html>
-
-<a href="profile.html" style="
-  position: fixed; 
-  top: 20px; 
-  right: 20px; 
-  background: #1DB954; 
-  color: white; 
-  border-radius: 50%; 
-  width: 50px; 
-  height: 50px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  text-decoration: none;
-">👤</a>
-
-<script>
-  // Настройки
-  const BOT_TOKEN = "8047530473:AAFoUynWhz1PAomnPLFZZ5nM0yhCS59Wsno"; 
-  
-  // Кнопка входа
-  document.querySelector('.upload-btn').innerHTML = `
-    <script async src="https://telegram.org/js/telegram-widget.js?22" 
-      data-telegram-login="soundtree_auth_bot" 
-      data-size="large"
-      data-radius="20"
-      data-auth-url="https://${location.hostname}/auth.html" 
-      data-request-access="write"
-    ><\/script>
-  `;
-</script>
-
-<script>
-  // Запрос разрешения на уведомления
-  Notification.requestPermission().then(perm => {
-    if(perm === "granted") {
-      new Notification("Soundtree", {
-        body: "Сайт готов к работе!",
-        icon: "https://i.imgur.com/treelogo.png"
-      })
-    }
-  })
-</script>
-
-<script>
-  // Проверка обновлений каждые 10 минут
-  setInterval(() => {
-    fetch('https://api.github.com/repos/ТВОЙ_НИК/Soundtree/commits?per_page=1')
-      .then(response => response.json())
-      .then(commits => {
-        const lastCommit = localStorage.getItem('lastCommit');
-        
-        // Если коммит изменился и пользователь активен
-        if(lastCommit && lastCommit !== commits[0].sha && !document.hidden) {
-          if(confirm('Доступна новая версия сайта! Перезагрузить сейчас?')) {
-            location.reload(); // Перезагрузка страницы
-          }
-        }
-        localStorage.setItem('lastCommit', commits[0].sha);
-      });
-  }, 10 * 60 * 1000); // 10 минут
-</script>
-
-<header style="
-  background: #121212;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-">
-  <div class="logo">SOUNDTREE</div>
-  
-  <nav>
-    <a href="index.html" style="color: #1DB954; margin: 0 10px;">Главная</a>
-    <a href="cities.html" style="color: white; margin: 0 10px;">Города</a>
-    <a href="top.html" style="color: white; margin: 0 10px;">Топ недели</a>
-    <a href="artists.html" style="color: white; margin: 0 10px;">Артисты</a>
-  </nav>
-  
-  <div id="auth-btn"></div>
-</header>
-
-<script>
-  // Проверяем авторизацию
-  const user = JSON.parse(localStorage.getItem('user'));
-  const authBtn = document.getElementById('auth-btn');
-  
-  if (user) {
-    // Если пользователь вошел
-    authBtn.innerHTML = `
-      <a href="profile.html" style="
-        background: #1DB954;
-        color: white;
-        padding: 10px 15px;
-        border-radius: 20px;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      ">
-        <img src="${user.photo || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" 
-             style="width:30px;height:30px;border-radius:50%;">
-        ${user.name}
-      </a>
-    `;
-  } else {
-    // Если не вошел - показываем кнопку входа
-    authBtn.innerHTML = `
-      <div id="telegram-login-button" style="
-        background: #0088cc;
-        color: white;
-        padding: 10px 15px;
-        border-radius: 20px;
-        cursor: pointer;
-      ">
-        Войти через Telegram
-      </div>
-    `;
-    
-    // Вешаем обработчик
-    document.getElementById('telegram-login-button').onclick = function() {
-      // Создаем виджет
-      const script = document.createElement('script');
-      script.src = 'https://telegram.org/js/telegram-widget.js?22';
-      script.async = true;
-      script.setAttribute('data-telegram-login', 'soundtree_auth_bot');
-      script.setAttribute('data-size', 'large');
-      script.setAttribute('data-radius', '20');
-      script.setAttribute('data-auth-url', window.location.origin + '/auth.html');
-      script.setAttribute('data-request-access', 'write');
-      document.body.appendChild(script);
-    };
-  }
-</script>
-
-<script>
-  // Сохраняем состояние при обновлении
-  window.addEventListener('beforeunload', () => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if(user) {
-      sessionStorage.setItem('tempUser', JSON.stringify(user));
-    }
-  });
-  
-  // Восстанавливаем при загрузке
-  document.addEventListener('DOMContentLoaded', () => {
-    const tempUser = sessionStorage.getItem('tempUser');
-    if(tempUser && !localStorage.getItem('user')) {
-      localStorage.setItem('user', tempUser);
-    }
-    sessionStorage.removeItem('tempUser');
-  });
-</script>
-
-FULL FIX BY BRO
