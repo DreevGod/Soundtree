@@ -27,6 +27,55 @@
     
     body 
 
+<div id="upload-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; padding:20px;">
+  <div style="background:#181818; max-width:500px; margin:50px auto; padding:30px; border-radius:15px;">
+    <h2>Загрузи свой трек</h2>
+    
+    <form id="track-form">
+      <input type="text" placeholder="Название трека" required style="width:100%; padding:12px; margin:10px 0; background:#232323; border:none; color:white;">
+      
+      <input type="text" placeholder="Твой псевдоним" required style="width:100%; padding:12px; margin:10px 0; background:#232323; border:none; color:white;">
+      
+      <select required style="width:100%; padding:12px; margin:10px 0; background:#232323; border:none; color:white;">
+        <option value="">Выбери город</option>
+        <option>Москва</option>
+        <option>Алматы</option>
+        <option>Киев</option>
+        <!-- Добавь другие города -->
+      </select>
+      
+      <input type="url" placeholder="Ссылка на трек (Google Drive, Dropbox)" required style="width:100%; padding:12px; margin:10px 0; background:#232323; border:none; color:white;">
+      
+      <button type="submit" style="background:#1DB954; color:white; border:none; padding:15px; width:100%; margin-top:20px; font-weight:bold; cursor:pointer;">
+        Отправить
+      </button>
+    </form>
+    
+    <button onclick="document.getElementById('upload-modal').style.display='none'" style="background:none; border:none; color:#aaa; position:absolute; top:20px; right:20px; font-size:24px;">
+      ✕
+    </button>
+  </div>
+</div>
+
+<!-- Кнопка вызова формы -->
+<button onclick="document.getElementById('upload-modal').style.display='block'" style="
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #1DB954;
+  color: white;
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 24px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  cursor: pointer;
+">
+  +
+</button>
+
+
 <script>
   // Конфигурация
   const CONFIG = {
