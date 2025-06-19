@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Города | Soundtree</title>
+  <style>
+    body { background: #0f0f0f; color: white; font-family: Arial; }
+    .city-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px; 
+      padding: 20px;
+    }
+    .city-card {
+      background: #181818;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .city-card:hover {
+      transform: scale(1.05);
+      border: 1px solid #1DB954;
+    }
+  </style>
+</head>
+<body>
+  <!-- Вставь сюда такое же меню как в index.html -->
+  
+  <div class="city-grid">
+    <div class="city-card" onclick="location.href='city.html?id=1'">
+      <h3>Москва</h3>
+      <p>24 трека</p>
+    </div>
+    
+    <div class="city-card" onclick="location.href='city.html?id=2'">
+      <h3>Алматы</h3>
+      <p>18 треков</p>
+    </div>
+    
+    <!-- Добавь остальные города -->
+  </div>
+</body>
+</html>
