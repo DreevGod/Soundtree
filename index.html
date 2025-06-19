@@ -281,3 +281,22 @@
     };
   }
 </script>
+
+<script>
+  // Сохраняем состояние при обновлении
+  window.addEventListener('beforeunload', () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if(user) {
+      sessionStorage.setItem('tempUser', JSON.stringify(user));
+    }
+  });
+  
+  // Восстанавливаем при загрузке
+  document.addEventListener('DOMContentLoaded', () => {
+    const tempUser = sessionStorage.getItem('tempUser');
+    if(tempUser && !localStorage.getItem('user')) {
+      localStorage.setItem('user', tempUser);
+    }
+    sessionStorage.removeItem('tempUser');
+  });
+</script>
