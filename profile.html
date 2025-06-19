@@ -66,3 +66,17 @@
   </script>
 </body>
 </html>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user) {
+      alert("Сначала войдите в аккаунт!");
+      window.location.href = "index.html";
+      return;
+    }
+    
+    // Остальной код заполнения профиля...
+  });
+</script>
