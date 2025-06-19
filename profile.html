@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Мой профиль</title>
+  <style>
+    body { 
+      background: #0f0f0f; 
+      color: white; 
+      font-family: Arial;
+      text-align: center;
+      padding: 20px;
+    }
+    .profile {
+      max-width: 500px;
+      margin: 50px auto;
+      background: #181818;
+      padding: 30px;
+      border-radius: 20px;
+    }
+    .avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #1DB954;
+    }
+    .logout-btn {
+      background: #FF5E3A;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile">
+    <h1>Мой профиль</h1>
+    <img id="avatar" class="avatar" src="" alt="Аватар">
+    <h2 id="username"></h2>
+    <p>Город: <span id="city"></span></p>
+    
+    <button class="logout-btn" onclick="logout()">Выйти</button>
+  </div>
+
+  <script>
+    // Получаем данные пользователя
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    if(!user.id) {
+      alert('Сначала войдите!');
+      window.location = 'index.html';
+    }
+    
+    // Заполняем профиль
+    document.getElementById('avatar').src = user.photo || 'https://via.placeholder.com/150';
+    document.getElementById('username').textContent = user.name;
+    document.getElementById('city').textContent = user.city;
+    
+    function logout() {
+      localStorage.removeItem('user');
+      window.location = 'index.html';
+    }
+  </script>
+</body>
+</html>
