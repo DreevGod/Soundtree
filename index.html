@@ -25,7 +25,210 @@
       box-sizing: border-box;
     }
     
-    body {
+    body 
+
+<script>
+  // Конфигурация
+  const CONFIG = {
+    telegramBot: "SoundtreeAuthBot",
+    cities: ["Москва", "СПб", "Казань", "Екатеринбург", "Алматы", "Минск", "Киев", "Астана"],
+    apiEndpoint: "https://your-backend-api.com" // Замени на реальный API
+  };
+
+  // Реальные треки для демо (замени на свои)
+  const TRACKS = [
+    {
+      id: 1,
+      title: "Восточный Бит",
+      artist: "Казань Волна",
+      city: "Казань",
+      cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745",
+      audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      duration: "3:45"
+    },
+    {
+      id: 2,
+      title: "Сибирские Просторы",
+      artist: "Алёна из Томска",
+      city: "СПб",
+      cover: "https://images.unsplash.com/photo-1494232410401-ad00d5433cfa",
+      audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+      duration: "4:20"
+    }
+  ];
+
+  // Инициализация плеера
+  function initPlayer() {
+    const audio = new Audio();
+    let currentTrack = null;
+    
+    // Создаем элементы для всех треков
+    TRACKS.forEach(track => {
+      const playerHTML = `
+        <div class="wave-player" data-id="${track.id}">
+          <div class="waveform">
+            <canvas class="wave-canvas"></canvas>
+          </div>
+          <div class="player-controls">
+            <button class="play-btn" onclick="playTrack(${track.id})">
+              <i class="fas fa-play"></i>
+            </button>
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress"></div>
+              </div>
+              <div class="time">0:00 / ${track.duration}</div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.querySelector(`.track-card[data-id="${track.id}"] .track-info`)
+        .insertAdjacentHTML('beforeend', playerHTML);
+    });
+    
+    // Функция воспроизведения
+    window.playTrack = function(trackId) {
+      const track = TRACKS.find(t => t.id === trackId);
+      
+      if(currentTrack === trackId) {
+        // Пауза/воспроизведение текущего трека
+        if(audio.paused) {
+          audio.play();
+          document.querySelector(`.play-btn[onclick="playTrack(${trackId})"] i`)
+            .classList.replace('fa-play', 'fa-pause');
+        } else {
+          audio.pause();
+          document.querySelector(`.play-btn[onclick="playTrack(${trackId})"] i`)
+            .classList.replace('fa-pause', 'fa-play');
+        }
+      } else {
+        // Новый трек
+        currentTrack = trackId;
+        audio.src = track.audio;
+        audio.play();
+        
+        // Обновляем иконки
+        document.querySelectorAll('.play-btn i').forEach(icon => {
+          icon.classList.replace('fa-pause', 'fa-play');
+        });
+        document.querySelector(`.play-btn[onclick="playTrack(${trackId})"] i`)
+          .classList.replace('fa-play', 'fa-pause');
+        
+        // Обновляем время
+        audio.ontimeupdate = function() {
+          const minutes = Math.floor(audio.currentTime / 60);
+          const seconds = Math.floor(audio.currentTime % 60);
+          document.querySelector(`.wave-player[data-id="${trackId}"] .time`)
+            .textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds} / ${track.duration}`;
+            
+          const progress = (audio.currentTime / audio.duration) * 100;
+          document.querySelector(`.wave-player[data-id="${trackId}"] .progress`)
+            .style.width = `${progress}%`;
+        };
+      }
+    };
+  }
+
+  // Инициализация авторизации
+  function initAuth() {
+    const authButton = document.getElementById('authButton');
+    
+    // Проверяем, авторизован ли пользователь
+    const savedUser = localStorage.getItem('soundtree_user');
+    if(savedUser) {
+      const user = JSON.parse(savedUser);
+      showUserProfile(user);
+    }
+    
+    // Обработчик кнопки
+    authButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      initTelegramAuth();
+    });
+  }
+
+  // Показываем профиль пользователя
+  function showUserProfile(user) {
+    const authSection = document.querySelector('.auth-section');
+    authSection.innerHTML = `
+      <div class="user-profile">
+        <img src="${user.photoUrl || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" 
+             class="user-avatar">
+        <span>${user.firstName}</span>
+        <button onclick="logout()" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    `;
+  }
+
+  // Telegram авторизация
+  function initTelegramAuth() {
+    window.TelegramAuth = {
+      onAuth: function(user) {
+        // Сохраняем пользователя
+        localStorage.setItem('soundtree_user', JSON.stringify(user));
+        showUserProfile(user);
+        alert(`Добро пожаловать, ${user.firstName}!`);
+      }
+    };
+
+    const script = document.createElement('script');
+    script.src = `https://telegram.org/js/telegram-widget.js?22?bot=${CONFIG.telegramBot}`;
+    script.async = true;
+    document.body.appendChild(script);
+  }
+
+  // Выход из системы
+  window.logout = function() {
+    localStorage.removeItem('soundtree_user');
+    location.reload();
+  }
+
+  // Загрузка контента
+  function loadContent() {
+    // Загружаем треки
+    const tracksGrid = document.querySelector('.tracks-grid');
+    tracksGrid.innerHTML = '';
+    
+    TRACKS.forEach(track => {
+      const trackHTML = `
+        <div class="track-card" data-id="${track.id}">
+          <img src="${track.cover}" alt="${track.title}" class="track-image">
+          <div class="track-info">
+            <h3 class="track-title">${track.title}</h3>
+            <div class="track-artist">
+              <i class="fas fa-user"></i> ${track.artist}
+            </div>
+            <div class="track-city">
+              <i class="fas fa-map-marker-alt"></i> ${track.city}
+            </div>
+            <!-- Плеер добавится через initPlayer -->
+          </div>
+        </div>
+      `;
+      tracksGrid.insertAdjacentHTML('beforeend', trackHTML);
+    });
+    
+    // Инициализируем плеер после загрузки треков
+    initPlayer();
+  }
+
+  // Инициализация при загрузке страницы
+  document.addEventListener('DOMContentLoaded', function() {
+    initAuth();
+    loadContent();
+    
+    // Мобильное меню
+    document.getElementById('navToggle').addEventListener('click', function() {
+      document.getElementById('mainNav').classList.toggle('active');
+    });
+  });
+</script>
+
+
+{
       background: var(--dark);
       color: var(--text);
       font-family: 'Montserrat', sans-serif;
