@@ -25,7 +25,145 @@
       box-sizing: border-box;
     }
     
-    body 
+    <body> 
+
+<div id="auth-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; padding:20px; box-sizing:border-box;">
+  <div style="background:#181818; max-width:400px; margin:100px auto; padding:30px; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.5); position:relative;">
+    <button onclick="closeAuthModal()" style="position:absolute; top:15px; right:15px; background:none; border:none; color:#aaa; font-size:24px; cursor:pointer;">✕</button>
+    
+    <div id="auth-tabs" style="display:flex; margin-bottom:25px; border-bottom:1px solid #333;">
+      <button id="login-tab" style="flex:1; padding:15px; background:#1DB954; color:white; border:none; cursor:pointer; font-weight:bold;">Вход</button>
+      <button id="register-tab" style="flex:1; padding:15px; background:#333; color:white; border:none; cursor:pointer;">Регистрация</button>
+    </div>
+    
+    <!-- Форма входа -->
+    <div id="login-form" style="display:block;">
+      <div style="margin-bottom:20px;">
+        <input type="text" id="login-username" placeholder="Email или логин" required style="width:100%; padding:12px; background:#232323; border:1px solid #333; border-radius:8px; color:white; margin-bottom:15px;">
+        <input type="password" id="login-password" placeholder="Пароль" required style="width:100%; padding:12px; background:#232323; border:1px solid #333; border-radius:8px; color:white;">
+      </div>
+      <button onclick="loginUser()" style="width:100%; padding:15px; background:#1DB954; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Войти</button>
+    </div>
+    
+    <!-- Форма регистрации -->
+    <div id="register-form" style="display:none;">
+      <div style="margin-bottom:20px;">
+        <input type="text" id="reg-username" placeholder="Придумайте логин" required style="width:100%; padding:12px; background:#232323; border:1px solid #333; border-radius:8px; color:white; margin-bottom:15px;">
+        <input type="email" id="reg-email" placeholder="Ваш email" required style="width:100%; padding:12px; background:#232323; border:1px solid #333; border-radius:8px; color:white; margin-bottom:15px;">
+        <input type="password" id="reg-password" placeholder="Придумайте пароль" required style="width:100%; padding:12px; background:#232323; border:1px solid #333; border-radius:8px; color:white;">
+      </div>
+      <button onclick="registerUser()" style="width:100%; padding:15px; background:#1DB954; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Зарегистрироваться</button>
+    </div>
+  </div>
+</div>
+
+<button id="auth-button" style="background:#1DB954; color:white; border:none; padding:10px 20px; border-radius:30px; font-weight:600; cursor:pointer; position:fixed; top:20px; right:20px; z-index:1000;">Войти</button>
+
+<script>
+// Функции управления модальным окном
+function openAuthModal() {
+  document.getElementById('auth-modal').style.display = 'block';
+}
+function closeAuthModal() {
+  document.getElementById('auth-modal').style.display = 'none';
+}
+
+// Переключение между вкладками
+document.getElementById('login-tab').addEventListener('click', function() {
+  document.getElementById('login-form').style.display = 'block';
+  document.getElementById('register-form').style.display = 'none';
+  this.style.background = '#1DB954';
+  document.getElementById('register-tab').style.background = '#333';
+});
+
+document.getElementById('register-tab').addEventListener('click', function() {
+  document.getElementById('register-form').style.display = 'block';
+  document.getElementById('login-form').style.display = 'none';
+  this.style.background = '#1DB954';
+  document.getElementById('login-tab').style.background = '#333';
+});
+
+// Регистрация нового пользователя
+function registerUser() {
+  const username = document.getElementById('reg-username').value;
+  const email = document.getElementById('reg-email').value;
+  const password = document.getElementById('reg-password').value;
+  
+  if(!username || !email || !password) {
+    alert('Заполните все поля!');
+    return;
+  }
+  
+  // Сохраняем пользователя в localStorage
+  const user = {
+    id: Date.now().toString(),
+    username,
+    email,
+    password,
+    createdAt: new Date().toISOString()
+  };
+  
+  localStorage.setItem('currentUser', JSON.stringify(user));
+  
+  // Обновляем интерфейс
+  updateAuthState();
+  closeAuthModal();
+  alert(`Добро пожаловать, ${username}!`);
+}
+
+// Вход пользователя
+function loginUser() {
+  const login = document.getElementById('login-username').value;
+  const password = document.getElementById('login-password').value;
+  
+  // В реальном приложении здесь была бы проверка с сервером
+  // Для демо просто создаем "фейкового" пользователя
+  const user = {
+    id: 'demo-user',
+    username: 'DemoUser',
+    email: 'demo@example.com',
+    createdAt: '2023-01-01'
+  };
+  
+  localStorage.setItem('currentUser', JSON.stringify(user));
+  
+  // Обновляем интерфейс
+  updateAuthState();
+  closeAuthModal();
+  alert('Вход выполнен успешно!');
+}
+
+// Выход из системы
+function logoutUser() {
+  localStorage.removeItem('currentUser');
+  updateAuthState();
+  alert('Вы вышли из системы');
+}
+
+// Обновление состояния кнопки
+function updateAuthState() {
+  const authButton = document.getElementById('auth-button');
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+  
+  if(user) {
+    authButton.textContent = user.username;
+    authButton.onclick = logoutUser;
+    authButton.style.background = '#FF5E3A';
+  } else {
+    authButton.textContent = 'Войти';
+    authButton.onclick = openAuthModal;
+    authButton.style.background = '#1DB954';
+  }
+}
+
+// Проверяем при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+  updateAuthState();
+  
+  // Открываем модалку по кнопке
+  document.getElementById('auth-button').addEventListener('click', openAuthModal);
+});
+</script>
 
 <div id="upload-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; padding:20px; overflow:auto;">
   <div style="max-width:600px; margin:40px auto; background:#181818; border-radius:15px; padding:30px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
