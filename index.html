@@ -27,6 +27,65 @@
     
     body 
 
+<script>
+// Фильтр модерации
+function moderateTrack(trackData) {
+  const forbiddenWords = ["наркотики", "насилие", "расизм", "порно"]; // Запрещённые слова
+  
+  // Проверка названия
+  for(let word of forbiddenWords) {
+    if(trackData.title.toLowerCase().includes(word)) {
+      return false; // Трек отклонён
+    }
+  }
+  
+  // Проверка ссылки
+  if(!trackData.audioUrl.includes("https://")) {
+    return false;
+  }
+  
+  return true; // Трек прошёл модерацию
+}
+
+// Обработка формы
+document.getElementById("track-form").addEventListener("submit", function(e) {
+  e.preventDefault();
+  
+  const trackData = {
+    title: this.querySelector("input[type='text']").value,
+    artist: this.querySelectorAll("input[type='text']")[1].value,
+    city: this.querySelector("select").value,
+    audioUrl: this.querySelector("input[type='url']").value
+  };
+  
+  if(moderateTrack(trackData)) {
+    // Сохраняем трек в "базу"
+    saveTrack(trackData);
+    alert("Трек отправлен на публикацию!");
+  } else {
+    alert("Трек не прошёл автоматическую модерацию");
+  }
+});
+
+// Сохранение трека (упрощённая версия)
+function saveTrack(track) {
+  // Генерируем HTML для нового трека
+  const trackHTML = `
+    <div class="track-card">
+      <img src="https://images.unsplash.com/photo-1494232410401-ad00d5433cfa" class="track-image">
+      <div class="track-info">
+        <h3>${track.title}</h3>
+        <p>${track.artist} (${track.city})</p>
+        <audio controls src="${track.audioUrl}"></audio>
+      </div>
+    </div>
+  `;
+  
+  // Добавляем в начало списка
+  document.querySelector(".tracks-grid").insertAdjacentHTML("afterbegin", trackHTML);
+}
+</script>
+
 <div id="upload-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; padding:20px;">
   <div style="background:#181818; max-width:500px; margin:50px auto; padding:30px; border-radius:15px;">
     <h2>Загрузи свой трек</h2>
