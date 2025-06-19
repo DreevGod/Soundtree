@@ -27,59 +27,349 @@
     
     body 
 
+<div id="upload-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; padding:20px; overflow:auto;">
+  <div style="max-width:600px; margin:40px auto; background:#181818; border-radius:15px; padding:30px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+      <h2 style="font-size:28px;">Загрузка трека</h2>
+      <button onclick="closeUploadModal()" style="background:none; border:none; color:#aaa; font-size:24px; cursor:pointer;">✕</button>
+    </div>
+    
+    <form id="upload-form" style="display:grid; gap:20px;">
+      <!-- Поле для трека -->
+      <div class="upload-field">
+        <label style="display:block; margin-bottom:10px; font-weight:500;">Аудиофайл (MP3, WAV, FLAC)</label>
+        <div id="drop-zone" style="border:2px dashed #333; border-radius:10px; padding:40px 20px; text-align:center; cursor:pointer; transition:all 0.3s;">
+          <i class="fas fa-cloud-upload-alt" style="font-size:48px; color:#444; margin-bottom:15px;"></i>
+          <p style="margin-bottom:10px;">Перетащите аудиофайл сюда</p>
+          <p style="color:#777; font-size:14px;">Или нажмите для выбора файла</p>
+          <p style="color:#777; font-size:12px; margin-top:5px;">Макс. размер: 100 MB</p>
+          <input type="file" id="audio-file" accept="audio/*" style="display:none;">
+        </div>
+        <div id="file-info" style="margin-top:10px; display:none;">
+          <p><i class="fas fa-music"></i> <span id="file-name"></span> (<span id="file-size"></span>)</p>
+          <div id="upload-progress" style="height:6px; background:#333; border-radius:3px; margin-top:10px; overflow:hidden;">
+            <div id="progress-bar" style="height:100%; width:0%; background:#1DB954; transition:width 0.3s;"></div>
+          </div>
+          <p id="progress-text" style="text-align:center; margin-top:5px; font-size:14px;">Подготовка к загрузке...</p>
+        </div>
+      </div>
+      
+      <!-- Поля ввода -->
+      <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+        <div class="upload-field">
+          <label>Название трека</label>
+          <input type="text" id="track-title" required style="width:100%; padding:12px; background:#232323; border:1px solid #333; border-radius:8px; color:white;">
+        </div>
+        
+        <div class="upload-field">
+          <label>Псевдоним</label>
+          <input type="text" id="artist-name" required style="width:100%; padding:12px; background:#232323; border:1px solid #333; border-radius:8px; color:white;">
+        </div>
+      </div>
+      
+      <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+        <div class="upload-field">
+          <label>Город</label>
+          <select id="city" required style="width:100%; padding:12px; background:#232323; border:1px solid #333; border-radius:8px; color:white;">
+            <option value="">Выберите город</option>
+            <option>Москва</option>
+            <option>Санкт-Петербург</option>
+            <option>Казань</option>
+            <option>Екатеринбург</option>
+            <option>Алматы</option>
+            <option>Минск</option>
+            <option>Киев</option>
+            <option>Ташкент</option>
+          </select>
+        </div>
+        
+        <div class="upload-field">
+          <label>Жанр</label>
+          <select id="genre" required style="width:100%; padding:12px; background:#232323; border:1px solid #333; border-radius:8px; color:white;">
+            <option value="">Выберите жанр</option>
+            <option>Рэп</option>
+            <option>Поп</option>
+            <option>Рок</option>
+            <option>Электроника</option>
+            <option>R&B</option>
+            <option>Фолк</option>
+            <option>Джаз</option>
+            <option>Классика</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Обложка -->
+      <div class="upload-field">
+        <label>Обложка трека</label>
+        <div style="display:flex; gap:15px; align-items:center;">
+          <div id="cover-preview" style="width:120px; height:120px; background:#232323; border:1px dashed #444; border-radius:8px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+            <i class="fas fa-image" style="font-size:32px; color:#444;"></i>
+          </div>
+          <div>
+            <button type="button" onclick="document.getElementById('cover-file').click()" style="background:#333; color:white; border:none; padding:10px 15px; border-radius:6px; cursor:pointer;">
+              Выбрать файл
+            </button>
+            <input type="file" id="cover-file" accept="image/*" style="display:none;">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Описание -->
+      <div class="upload-field">
+        <label>Описание (необязательно)</label>
+        <textarea id="description" style="width:100%; min-height:100px; padding:12px; background:#232323; border:1px solid #333; border-radius:8px; color:white; resize:vertical;"></textarea>
+      </div>
+      
+      <!-- Кнопка отправки -->
+      <button type="submit" id="submit-btn" style="background:#1DB954; color:white; border:none; padding:15px; border-radius:50px; font-size:18px; font-weight:600; cursor:pointer; transition:background 0.3s;">
+        Опубликовать трек
+      </button>
+    </form>
+  </div>
+</div>
+
+<button onclick="openUploadModal()" id="upload-button" style="position:fixed; bottom:30px; right:30px; width:60px; height:60px; border-radius:50%; background:#1DB954; color:white; border:none; font-size:24px; box-shadow:0 5px 15px rgba(0,0,0,0.3); cursor:pointer; display:flex; align-items:center; justify-content:center;">
+  <i class="fas fa-plus"></i>
+</button>
+
 <script>
-// Фильтр модерации
-function moderateTrack(trackData) {
-  const forbiddenWords = ["наркотики", "насилие", "расизм", "порно"]; // Запрещённые слова
-  
-  // Проверка названия
-  for(let word of forbiddenWords) {
-    if(trackData.title.toLowerCase().includes(word)) {
-      return false; // Трек отклонён
-    }
-  }
-  
-  // Проверка ссылки
-  if(!trackData.audioUrl.includes("https://")) {
-    return false;
-  }
-  
-  return true; // Трек прошёл модерацию
+// Конфигурация
+const CONFIG = {
+  UPLOAD_API: "https://api.upload.io/v2/accounts/kW15b/uploads/form_data", // Замени на свой
+  PUBLIC_KEY: "public_kW15b7x8k4q8eHd9gF4d9RkXftXe" // Замени на свой ключ
+};
+
+// Открытие/закрытие модального окна
+function openUploadModal() {
+  document.getElementById('upload-modal').style.display = 'block';
+}
+function closeUploadModal() {
+  document.getElementById('upload-modal').style.display = 'none';
+  resetForm();
 }
 
-// Обработка формы
-document.getElementById("track-form").addEventListener("submit", function(e) {
+// Сброс формы
+function resetForm() {
+  document.getElementById('upload-form').reset();
+  document.getElementById('file-info').style.display = 'none';
+  document.getElementById('cover-preview').innerHTML = '<i class="fas fa-image" style="font-size:32px; color:#444;"></i>';
+}
+
+// Обработка перетаскивания файла
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('audio-file');
+
+dropZone.addEventListener('click', () => fileInput.click());
+
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, preventDefaults, false);
+});
+
+function preventDefaults(e) {
   e.preventDefault();
-  
-  const trackData = {
-    title: this.querySelector("input[type='text']").value,
-    artist: this.querySelectorAll("input[type='text']")[1].value,
-    city: this.querySelector("select").value,
-    audioUrl: this.querySelector("input[type='url']").value
-  };
-  
-  if(moderateTrack(trackData)) {
-    // Сохраняем трек в "базу"
-    saveTrack(trackData);
-    alert("Трек отправлен на публикацию!");
-  } else {
-    alert("Трек не прошёл автоматическую модерацию");
+  e.stopPropagation();
+}
+
+['dragenter', 'dragover'].forEach(eventName => {
+  dropZone.addEventListener(eventName, () => {
+    dropZone.style.borderColor = '#1DB954';
+    dropZone.style.backgroundColor = 'rgba(29, 185, 84, 0.1)';
+  }, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, () => {
+    dropZone.style.borderColor = '#333';
+    dropZone.style.backgroundColor = 'transparent';
+  }, false);
+});
+
+dropZone.addEventListener('drop', handleDrop, false);
+
+function handleDrop(e) {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  handleFiles(files);
+}
+
+fileInput.addEventListener('change', () => {
+  handleFiles(fileInput.files);
+});
+
+function handleFiles(files) {
+  if (files.length > 0) {
+    const file = files[0];
+    
+    // Проверка типа файла
+    if (!file.type.startsWith('audio/')) {
+      alert('Пожалуйста, выберите аудиофайл (MP3, WAV, FLAC)');
+      return;
+    }
+    
+    // Проверка размера
+    if (file.size > 100 * 1024 * 1024) { // 100 MB
+      alert('Файл слишком большой! Максимальный размер: 100 MB');
+      return;
+    }
+    
+    // Показываем информацию о файле
+    document.getElementById('file-name').textContent = file.name;
+    document.getElementById('file-size').textContent = formatFileSize(file.size);
+    document.getElementById('file-info').style.display = 'block';
+    
+    // Сохраняем файл для последующей загрузки
+    window.selectedAudioFile = file;
+  }
+}
+
+// Превью обложки
+document.getElementById('cover-file').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('cover-preview').innerHTML = 
+        `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+    };
+    reader.readAsDataURL(file);
   }
 });
 
-// Сохранение трека (упрощённая версия)
-function saveTrack(track) {
-  // Генерируем HTML для нового трека
-  const trackHTML = `
-    <div class="track-card">
-      <img src="https://images.unsplash.com/photo-1494232410401-ad00d5433cfa" class="track-image">
-      <div class="track-info">
-        <h3>${track.title}</h3>
-        <p>${track.artist} (${track.city})</p>
-        <audio controls src="${track.audioUrl}"></audio>
+// Обработка отправки формы
+document.getElementById('upload-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  if (!window.selectedAudioFile) {
+    alert('Пожалуйста, выберите аудиофайл');
+    return;
+  }
+  
+  const trackData = {
+    title: document.getElementById('track-title').value,
+    artist: document.getElementById('artist-name').value,
+    city: document.getElementById('city').value,
+    genre: document.getElementById('genre').value,
+    description: document.getElementById('description').value,
+    audioFile: window.selectedAudioFile
+  };
+  
+  // Показываем прогресс
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('progress-text').textContent = 'Загрузка...';
+  
+  try {
+    // 1. Загружаем аудиофайл
+    const audioUrl = await uploadFile(trackData.audioFile);
+    
+    // 2. Загружаем обложку (если есть)
+    let coverUrl = '';
+    const coverInput = document.getElementById('cover-file');
+    if (coverInput.files.length > 0) {
+      coverUrl = await uploadFile(coverInput.files[0]);
+    }
+    
+    // 3. Сохраняем метаданные
+    await saveTrackMetadata({
+      ...trackData,
+      audioUrl,
+      coverUrl,
+      timestamp: new Date().toISOString()
+    });
+    
+    // 4. Показываем успех
+    document.getElementById('progress-text').innerHTML = 
+      '<span style="color:#1DB954;">Трек успешно загружен!</span>';
+    
+    // 5. Автоматически добавляем на сайт через 5 секунд
+    setTimeout(() => {
+      closeUploadModal();
+      addTrackToSite(trackData, audioUrl, coverUrl);
+      alert(`Трек "${trackData.title}" опубликован!`);
+    }, 5000);
+    
+  } catch (error) {
+    document.getElementById('progress-text').innerHTML = 
+      `<span style="color:#FF5E3A;">Ошибка: ${error.message}</span>`;
+    document.getElementById('submit-btn').disabled = false;
+  }
+});
+
+// Функция загрузки файла
+async function uploadFile(file) {
+  return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const xhr = new XMLHttpRequest();
+    
+    // Прогресс загрузки
+    xhr.upload.addEventListener('progress', function(e) {
+      if (e.lengthComputable) {
+        const percent = (e.loaded / e.total) * 100;
+        document.getElementById('progress-bar').style.width = percent + '%';
+        document.getElementById('progress-text').textContent = 
+          `Загрузка: ${Math.round(percent)}%`;
+      }
+    });
+    
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          resolve(response.fileUrl);
+        } else {
+          reject(new Error('Ошибка загрузки файла'));
+        }
+      }
+    };
+    
+    xhr.open('POST', CONFIG.UPLOAD_API, true);
+    xhr.setRequestHeader('Authorization', `Bearer ${CONFIG.PUBLIC_KEY}`);
+    xhr.send(formData);
+  });
+}
+
+// Сохранение метаданных (упрощенная версия)
+async function saveTrackMetadata(data) {
+  // В реальном приложении здесь будет запрос к вашему бэкенду
+  console.log('Метаданные трека:', data);
+  return new Promise(resolve => setTimeout(resolve, 1000));
+}
+
+// Добавление трека на сайт
+function addTrackToSite(trackData, audioUrl, coverUrl) {
+  const trackCard = document.createElement('div');
+  trackCard.className = 'track-card';
+  trackCard.innerHTML = `
+    <img src="${coverUrl || 'https://images.unsplash.com/photo-1494232410401-ad00d5433cfa'}" 
+         class="track-image">
+    <div class="track-info">
+      <h3>${trackData.title}</h3>
+      <div class="track-artist">
+        <i class="fas fa-user"></i> ${trackData.artist} (${trackData.city})
+      </div>
+      <div class="wave-player">
+        <!-- Плеер будет здесь -->
       </div>
     </div>
   `;
+  
+  // Добавляем в начало списка
+  document.querySelector('.tracks-grid').prepend(trackCard);
+  
+  // Инициализируем плеер
+  initPlayerForTrack(trackCard, audioUrl);
+}
+
+// Вспомогательные функции
+function formatFileSize(bytes) {
+  if (bytes < 1024) return bytes + ' bytes';
+  else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  else return (bytes / 1048576).toFixed(1) + ' MB';
+}
+</script>
+
   
   // Добавляем в начало списка
   document.querySelector(".tracks-grid").insertAdjacentHTML("afterbegin", trackHTML);
