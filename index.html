@@ -119,3 +119,15 @@
     ><\/script>
   `;
 </script>
+
+<script>
+  // Запрос разрешения на уведомления
+  Notification.requestPermission().then(perm => {
+    if(perm === "granted") {
+      new Notification("Soundtree", {
+        body: "Сайт готов к работе!",
+        icon: "https://i.imgur.com/treelogo.png"
+      })
+    }
+  })
+</script>
