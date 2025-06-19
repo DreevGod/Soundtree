@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Загрузка трека | Soundtree</title>
+  <style>
+    /* Общие стили из index.html */
+    :root {
+      --primary: #1DB954;
+      --dark: #121212;
+      --gray: #181818;
+      --light: #ffffff;
+      --accent: #FF5E3A;
+    }
+    
+    /* Контент загрузки */
+    .upload-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    
+    .upload-header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .upload-header h1 {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    
+    .upload-box {
+      background: var(--gray);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 15px;
+      background: #232323;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+    }
+    
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .file-upload {
+      border: 2px dashed #444;
+      padding: 40px 20px;
+      text-align: center;
+      border-radius: 8px;
+      margin: 20px 0;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    
+    .file-upload:hover {
+      border-color: var(--primary);
+      background: rgba(29, 185, 84, 0.1);
+    }
+    
+    .file-upload input {
+      display: none;
+    }
+    
+    .submit-button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    
+    .submit-button:hover {
+      background: #1ed760;
+    }
+  </style>
+</head>
+<body>
+  <!-- Шапка (копия из index.html) -->
+  <header>
+    <div class="logo">SOUNDTREE</div>
+    
+    <nav>
+      <a href="index.html">Главная</a>
+      <a href="cities.html">Города</a>
+      <a href="top.html">Топ недели</a>
+      <a href="artists.html" class="active">Артисты</a>
+    </nav>
+    
+    <div id="auth-btn">
+      <a href="#" class="auth-button" id="upload-login">
+        <span>Загрузка...</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Форма загрузки -->
+  <div class="upload-container">
+    <div class="upload-header">
+      <h1>Загрузи свой трек</h1>
+      <p>Поделись музыкой с сообществом Soundtree</p>
+    </div>
+    
+    <div class="upload-box">
+      <form id="upload-form">
+        <div class="form-group">
+          <label for="track-title">Название трека</label>
+          <input type="text" id="track-title" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="artist-name">Имя артиста</label>
+          <input type="text" id="artist-name" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="city">Город</label>
+          <select id="city" required>
+            <option value="">Выберите город</option>
+            <option value="Москва">Москва</option>
+            <option value="Санкт-Петербург">Санкт-Петербург</option>
+            <option value="Казань">Казань</option>
+            <option value="Алматы">Алматы</option>
+            <option value="Минск">Минск</option>
+            <option value="Киев">Киев</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="genre">Жанр</label>
+          <select id="genre" required>
+            <option value="">Выберите жанр</option>
+            <option value="Рэп">Рэп</option>
+            <option value="Поп">Поп</option>
+            <option value="Рок">Рок</option>
+            <option value="Электроника">Электроника</option>
+            <option value="Фолк">Фолк</option>
+            <option value="Джаз">Джаз</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="description">Описание</label>
+          <textarea id="description"></textarea>
+        </div>
+        
+        <div class="file-upload" id="drop-area">
+          <input type="file" id="file-input" accept="audio/*">
+          <h3>Перетащите аудиофайл сюда</h3>
+          <p>Или нажмите для выбора файла</p>
+          <p>MP3, WAV, FLAC (макс. 50 МБ)</p>
+        </div>
+        
+        <button type="submit" class="submit-button">Опубликовать трек</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = JSON.parse(localStorage.getItem('user'));
+      
+      // Проверка авторизации
+      if (!user) {
+        alert('Для загрузки треков необходимо войти в систему!');
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      // Обновляем кнопку в шапке
+      document.getElementById('upload-login').innerHTML = `
+        <img src="${user.photo || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" 
+             style="width:24px;height:24px;border-radius:50%;">
+        ${user.name}
+      `;
+      
+      // Обработка загрузки файла
+      const dropArea = document.getElementById('drop-area');
+      const fileInput = document.getElementById('file-input');
+      
+      dropArea.addEventListener('click', () => {
+        fileInput.click();
+      });
+      
+      // Обработка перетаскивания
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+      });
+      
+      function highlight() {
+        dropArea.classList.add('highlight');
+      }
+      
+      function unhighlight() {
+        dropArea.classList.remove('highlight');
+      }
+      
+      // Обработка загрузки
+      dropArea.addEventListener('drop', handleDrop, false);
+      
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+      }
+      
+      function handleFiles(files) {
+        if (files.length > 0) {
+          const file = files[0];
+          if (file.type.startsWith('audio/')) {
+            alert(`Файл "${file.name}" готов к загрузке!`);
+          } else {
+            alert('Пожалуйста, выберите аудиофайл');
+          }
+        }
+      }
+      
+      // Обработка формы
+      document.getElementById('upload-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Трек успешно загружен! После модерации он появится на сайте.');
+        this.reset();
+      });
+    });
+  </script>
+</body>
+</html>
