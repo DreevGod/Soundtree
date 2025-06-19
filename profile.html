@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head> <script>
+  // Проверка авторизации
+  const user = JSON.parse(localStorage.getItem('user'));
+  
+  if (!user) {
+    // Сохраняем URL профиля для редиректа после авторизации
+    localStorage.setItem('redirect', 'profile.html');
+    alert('Сначала войдите в аккаунт!');
+    window.location.href = "index.html";
+  }
+</script>
+
   <title>Мой профиль</title>
   <style>
     body { 
