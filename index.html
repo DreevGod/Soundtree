@@ -131,3 +131,22 @@
     }
   })
 </script>
+
+<script>
+  // Проверка обновлений каждые 10 минут
+  setInterval(() => {
+    fetch('https://api.github.com/repos/ТВОЙ_НИК/Soundtree/commits?per_page=1')
+      .then(response => response.json())
+      .then(commits => {
+        const lastCommit = localStorage.getItem('lastCommit');
+        
+        // Если коммит изменился и пользователь активен
+        if(lastCommit && lastCommit !== commits[0].sha && !document.hidden) {
+          if(confirm('Доступна новая версия сайта! Перезагрузить сейчас?')) {
+            location.reload(); // Перезагрузка страницы
+          }
+        }
+        localStorage.setItem('lastCommit', commits[0].sha);
+      });
+  }, 10 * 60 * 1000); // 10 минут
+</script>
