@@ -9,6 +9,35 @@
     <title>Soundtree | Музыкальные корни СНГ</title>
     <style>
         body
+
+<header style="
+  background: #121212;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+">
+  <div class="logo" style="
+    font-size: 24px;
+    font-weight: bold;
+    color: #1DB954;
+  ">SOUNDTREE</div>
+  
+  <nav style="display: flex; gap: 15px;">
+    <a href="index.html" style="color: #1DB954; text-decoration: none;">Главная</a>
+    <a href="cities.html" style="color: #aaa; text-decoration: none;">Города</a>
+    <a href="top.html" style="color: #aaa; text-decoration: none;">Топ недели</a>
+    <a href="artists.html" style="color: #aaa; text-decoration: none;">Артисты</a>
+  </nav>
+  
+  <div id="auth-btn" style="min-width: 180px; text-align: right;"></div>
+</header>
+
+<div style="height: 20px;"></div> <!-- Отступ после шапки -->
 <script>
   // Проверяем авторизацию при загрузке
   document.addEventListener('DOMContentLoaded', () => {
